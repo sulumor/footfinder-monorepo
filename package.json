@@ -1,0 +1,13 @@
+{
+  "name": "footfinder-mono",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run dev --prefix ./back & npm run dev --prefix ./front",
+    "start": "npm run build --prefix ./front & npm run start --prefix ./back"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
