@@ -50,7 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
         body,
       );
       localStorage.setItem("token", response.data.accessToken);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
       getUser(jwtDecode(response.data.accessToken));
       setLoading(false);
     } catch (error) {
@@ -139,7 +138,6 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
       setLoading(false);
 
       localStorage.setItem("token", response.data.accessToken);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
       getUser(jwtDecode(response.data.accessToken));
       return jwtDecode(response.data.accessToken);
     } catch (error) {
@@ -153,7 +151,6 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
 
   function logout(): void {
     localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
     setUser(null);
     setError("");
   }

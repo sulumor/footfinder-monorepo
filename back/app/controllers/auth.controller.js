@@ -36,9 +36,14 @@ export default class AuthController extends CoreController {
       : await ScoutDatamapper.findAll({ where: { email: body.email } });
     if (!data) return next(new ApiError(errorMessage, errorInfos));
 
+    res.cookie("refresh_token", createRefreshToken(data), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
     return res.status(200).json({
-      accessToken: createAccessToken(data),
-      refreshToken: createRefreshToken(data),
+      accessToken: createAccessToken(data)
     });
   }
 
@@ -60,8 +65,8 @@ export default class AuthController extends CoreController {
    * @returns { RegisterResponse } The access token
    */
   // eslint-disable-next-line consistent-return
-  static refreshToken({ body }, res, next) {
-    const { refreshToken } = body;
+  static refreshToken({ cookies }, res, next) {
+    const refreshToken = cookies.refresh_token;
     if (!refreshToken) return next(new ApiError("Null token", { httpStatus: 401 }));
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
       if (err) return next(new ApiError(err.message, { httpStatus: 403 }));
@@ -89,12 +94,28 @@ export default class AuthController extends CoreController {
       ? await PlayerDatamapper.insertSQL(user)
       : await ScoutDatamapper.insertSQL(user);
 
+      res.cookie("refresh_token", createRefreshToken(person), {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
+
     return res.status(201).json({
-      accessToken: createAccessToken(user),
-      refreshToken: createRefreshToken(person),
+      accessToken: createAccessToken(user)
     });
   }
 
+  /**
+   * Method to delete the refresh cookie
+   * @param {*} _
+   * @param { Express.Response } res
+   * @returns { Express.Response }
+   */
+  static deleteToken(_, res) {
+    res.clearCookie("refresh_token");
+    return res.status(200).json({ message: "refresh token deleted" });
+  }
+  
   static async forgotPassword({ body }, res, next) {
     const { email } = body;
     const [existsUser] = await this.datamapper.findAll({ where: { email } });
