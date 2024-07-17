@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run dev --prefix ./back & npm run dev --prefix ./front",
-    "install": "npm i --prefix ./back & npm i --prefix ./front & npm run build --prefix ./front",
+    "install": "npm i --prefix ./back && npm i --prefix ./front && npm run build --prefix ./front",
     "start": "npm run db:reset --prefix ./back & npm run start --prefix ./back"
   },
   "keywords": [],
